@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/track")
+@RequestMapping("/tracks")
 public class TrackController {
-    TrackService trackService;
+    private final TrackService trackService;
     public TrackController(TrackService trackService){
         this.trackService = trackService;
     }

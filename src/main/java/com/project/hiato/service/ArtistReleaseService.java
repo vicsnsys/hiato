@@ -49,7 +49,7 @@ public class ArtistReleaseService {
             ArtistReleaseDTO data) {
 
         ArtistRelease artistRelease = artistReleaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ArtistRelease not found"));
+                .orElseThrow(() -> new RuntimeException("Artist Release not found"));
 
         artistRelease.setPrimary(data.isPrimary());
 

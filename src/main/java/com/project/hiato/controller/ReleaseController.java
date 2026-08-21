@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/release")
+@RequestMapping("/releases")
 public class ReleaseController {
     private final ReleaseService releaseService;
 

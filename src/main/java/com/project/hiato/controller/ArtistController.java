@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/artist")
+@RequestMapping("/artists")
 public class ArtistController {
 
     private final ArtistService artistService;
