@@ -3,6 +3,8 @@ package com.project.hiato.service;
 import com.project.hiato.dto.LikeDTO;
 import com.project.hiato.entity.Like;
 import com.project.hiato.entity.LikeId;
+import com.project.hiato.exception.ConflictException;
+import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.repository.LikeRepository;
 import com.project.hiato.repository.ReviewRepository;
 import com.project.hiato.repository.UserRepository;
@@ -29,15 +31,15 @@ public class LikeService {
         id.setReviewId(data.getReviewId());
 
         if(!userRepository.existsById(id.getUserId())){
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("User not found");
         }
 
         if(!reviewRepository.existsById(id.getReviewId())){
-            throw new RuntimeException("Review not found");
+            throw new ResourceNotFoundException("Review not found");
         }
 
         if(likeRepository.existsById(id)){
-            throw new RuntimeException("Like already exists");
+            throw new ConflictException("Like already exists");
         }
 
         Like like = new Like();
@@ -66,7 +68,7 @@ public class LikeService {
 
     public LikeDTO findById(LikeId id){
         Like like = likeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Like not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Like not found"));
         LikeDTO response = new LikeDTO();
         response.setUserId(like.getId().getUserId());
         response.setReviewId(like.getId().getReviewId());
@@ -76,7 +78,7 @@ public class LikeService {
 
     public void deleteById(LikeId id){
         if(!likeRepository.existsById(id)){
-            throw new RuntimeException("Like not found");
+            throw new ResourceNotFoundException("Like not found");
         }
         likeRepository.deleteById(id);
     }

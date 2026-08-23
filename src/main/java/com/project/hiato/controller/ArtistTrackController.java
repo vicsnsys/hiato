@@ -8,7 +8,6 @@ import com.project.hiato.service.ArtistTrackService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/artist_tracks")
@@ -31,7 +30,7 @@ public class ArtistTrackController {
     }
 
     @GetMapping("/{artistId}/{trackId}")
-    public Optional<ArtistTrack> findById(@PathVariable Long artistId, @PathVariable Long trackId){
+    public ArtistTrack findById(@PathVariable Long artistId, @PathVariable Long trackId){
         ArtistTrackId id = new ArtistTrackId(artistId, trackId);
         return artistTrackService.findById(id);
     }

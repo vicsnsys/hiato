@@ -2,15 +2,15 @@ package com.project.hiato.service;
 
 
 import com.project.hiato.entity.Release;
+import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.repository.ReleaseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReleaseService {
-    ReleaseRepository releaseRepository;
+    private final ReleaseRepository releaseRepository;
 
     public ReleaseService(ReleaseRepository releaseRepository){
         this.releaseRepository = releaseRepository;
@@ -24,17 +24,21 @@ public class ReleaseService {
         return releaseRepository.findAll();
     }
 
-    public Optional<Release> findById(Long id){
-        return releaseRepository.findById(id);
+    public Release findById(Long id){
+        return releaseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Release not found"));
     }
 
     public void deleteRelease(Long id){
+        if(!releaseRepository.existsById(id)){
+            throw new ResourceNotFoundException("Release not found");
+        }
         releaseRepository.deleteById(id);
     }
 
     public Release updateRelease(Long id, Release releaseData){
         Release release = releaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Release not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Release not found"));
 
         release.setTitle(releaseData.getTitle());
         release.setRelease_date(releaseData.getRelease_date());

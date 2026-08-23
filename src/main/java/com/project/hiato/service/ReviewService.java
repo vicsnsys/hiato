@@ -3,6 +3,8 @@ package com.project.hiato.service;
 import com.project.hiato.dto.ReviewDTO;
 import com.project.hiato.dto.ReviewResponseDTO;
 import com.project.hiato.entity.Review;
+import com.project.hiato.exception.BusinessRuleException;
+import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.utils.TypeReview;
 import com.project.hiato.repository.ReleaseRepository;
 import com.project.hiato.repository.ReviewRepository;
@@ -35,23 +37,23 @@ public class ReviewService {
         Review review = new Review();
 
         if(!userRepository.existsById(data.getUserId())){
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("User not found");
         }
 
         if(data.getStars() < 1 || data.getStars() > 5) {
-            throw new ArithmeticException("Stars should be in a range 1-5");
+            throw new BusinessRuleException("Stars should be in a range 1-5");
         }
 
         if(!data.getTypeReview().equals(TypeReview.TRACK) && !data.getTypeReview().equals(TypeReview.RELEASE)){
-            throw new RuntimeException("Type Review should be a RELEASE or a TRACK");
+            throw new BusinessRuleException("Type Review should be a RELEASE or a TRACK");
         }
 
         if(data.getTypeReview().equals(TypeReview.RELEASE) && !releaseRepository.existsById(data.getTargetId())){
-            throw new RuntimeException("Release not found");
+            throw new ResourceNotFoundException("Release not found");
         }
 
         if(data.getTypeReview().equals(TypeReview.TRACK) && !trackRepository.existsById(data.getTargetId())){
-            throw new RuntimeException("Track not found");
+            throw new ResourceNotFoundException("Track not found");
         }
 
         review.setUserId(data.getUserId());
@@ -80,24 +82,24 @@ public class ReviewService {
 
     public ReviewResponseDTO findById(Long id){
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
         return toResponseDTO(review);
     }
 
     public void deleteById(Long id){
         if(!reviewRepository.existsById(id)){
-            throw new RuntimeException("Review not found");
+            throw new ResourceNotFoundException("Review not found");
         }
         reviewRepository.deleteById(id);
     }
 
     public ReviewResponseDTO update(Long id, ReviewDTO data){
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
         if(data.getStars() < 1 || data.getStars() > 5){
-            throw new ArithmeticException("Stars should be in a range 1-5");
+            throw new BusinessRuleException("Stars should be in a range 1-5");
         }
 
         review.setStars(data.getStars());

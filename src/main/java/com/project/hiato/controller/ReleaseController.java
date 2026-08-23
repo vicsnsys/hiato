@@ -5,7 +5,6 @@ import com.project.hiato.service.ReleaseService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/releases")
@@ -27,7 +26,7 @@ public class ReleaseController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Release> findById(@PathVariable Long id){
+    public Release findById(@PathVariable Long id){
         return releaseService.findById(id);
     }
 

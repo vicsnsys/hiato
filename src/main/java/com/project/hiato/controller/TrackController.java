@@ -5,7 +5,6 @@ import com.project.hiato.service.TrackService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/tracks")
@@ -26,7 +25,7 @@ public class TrackController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Track> findById(@PathVariable Long id){
+    public Track findById(@PathVariable Long id){
         return trackService.findById(id);
     }
 

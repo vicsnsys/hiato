@@ -5,7 +5,6 @@ import com.project.hiato.service.ArtistService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/artists")
@@ -28,7 +27,7 @@ public class ArtistController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Artist> findById(@PathVariable Long id){
+    public Artist findById(@PathVariable Long id){
         return artistService.findById(id);
     }
 

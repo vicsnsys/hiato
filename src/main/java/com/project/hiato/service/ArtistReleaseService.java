@@ -3,22 +3,37 @@ package com.project.hiato.service;
 import com.project.hiato.dto.ArtistReleaseDTO;
 import com.project.hiato.entity.ArtistRelease;
 import com.project.hiato.entity.ArtistReleaseId;
+import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.repository.ArtistReleaseRepository;
+import com.project.hiato.repository.ArtistRepository;
+import com.project.hiato.repository.ReleaseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ArtistReleaseService {
-    ArtistReleaseRepository artistReleaseRepository;
-    public ArtistReleaseService(ArtistReleaseRepository artistReleaseRepository){
+    private final ArtistReleaseRepository artistReleaseRepository;
+    private final ArtistRepository artistRepository;
+    private final ReleaseRepository releaseRepository;
+
+    public ArtistReleaseService(ArtistReleaseRepository artistReleaseRepository, ArtistRepository artistRepository, ReleaseRepository releaseRepository){
         this.artistReleaseRepository = artistReleaseRepository;
+        this.artistRepository = artistRepository;
+        this.releaseRepository = releaseRepository;
     }
 
     public ArtistReleaseDTO create(ArtistReleaseDTO data){
         ArtistReleaseId id = new ArtistReleaseId(data.getArtistId(), data.getReleaseId());
         ArtistRelease artistRelease = new ArtistRelease();
+
+        if(!artistRepository.existsById(data.getArtistId())){
+            throw new ResourceNotFoundException("Artist not found");
+        }
+
+        if(!releaseRepository.existsById(data.getReleaseId())){
+            throw new ResourceNotFoundException("Release not found");
+        }
 
         artistRelease.setId(id);
         artistRelease.setPrimary(data.isPrimary());
@@ -36,11 +51,15 @@ public class ArtistReleaseService {
         return artistReleaseRepository.findAll();
     }
 
-    public Optional<ArtistRelease> findById(ArtistReleaseId artistReleaseId){
-        return artistReleaseRepository.findById(artistReleaseId);
+    public ArtistRelease findById(ArtistReleaseId artistReleaseId){
+        return artistReleaseRepository.findById(artistReleaseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist Release not found"));
     }
 
     public void delete (ArtistReleaseId artistReleaseId){
+        if(!artistReleaseRepository.existsById(artistReleaseId)){
+            throw new ResourceNotFoundException("Artist Release not found");
+        }
         artistReleaseRepository.deleteById(artistReleaseId);
     }
 
@@ -48,8 +67,16 @@ public class ArtistReleaseService {
             ArtistReleaseId id,
             ArtistReleaseDTO data) {
 
+        if(!artistRepository.existsById(id.getArtistId())){
+            throw new ResourceNotFoundException("Artist not found");
+        }
+
+        if(!releaseRepository.existsById(id.getReleaseId())){
+            throw new ResourceNotFoundException("Release not found");
+        }
+
         ArtistRelease artistRelease = artistReleaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artist Release not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist Release not found"));
 
         artistRelease.setPrimary(data.isPrimary());
 

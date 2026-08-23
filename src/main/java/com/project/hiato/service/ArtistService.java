@@ -1,11 +1,11 @@
 package com.project.hiato.service;
 
 import com.project.hiato.entity.Artist;
+import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.repository.ArtistRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ArtistService {
@@ -23,17 +23,21 @@ public class ArtistService {
         return artistRepository.findAll();
     }
 
-    public Optional<Artist> findById(Long id){
-        return artistRepository.findById(id);
+    public Artist findById(Long id){
+        return artistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
     }
 
     public void deleteArtist(Long id) {
+        if(!artistRepository.existsById(id)){
+            throw new ResourceNotFoundException("Artist not found");
+        }
         artistRepository.deleteById(id);
     }
 
     public Artist updateArtist(Long id, Artist artistData){
         Artist artist = artistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artist not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist not found"));
 
         artist.setName(artistData.getName());
         artist.setBiography(artistData.getBiography());

@@ -3,6 +3,8 @@ package com.project.hiato.service;
 import com.project.hiato.dto.UserDTO;
 import com.project.hiato.dto.UserResponseDTO;
 import com.project.hiato.entity.User;
+import com.project.hiato.exception.ConflictException;
+import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Service
 public class UserService {
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
@@ -20,7 +22,7 @@ public class UserService {
     public UserResponseDTO create(UserDTO data){
 
         if(userRepository.existsByNickname(data.getNickname())){
-            throw new RuntimeException("Nickname already exists");
+            throw new ConflictException("Nickname already exists");
         }
 
         User user = new User();
@@ -55,7 +57,7 @@ public class UserService {
 
     public UserResponseDTO findById(Long id){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         UserResponseDTO response = new UserResponseDTO();
         response.setEmail(user.getEmail());
@@ -66,15 +68,18 @@ public class UserService {
     }
 
     public void deleteById(Long id){
+        if(!userRepository.existsById(id)){
+            throw new ResourceNotFoundException("User not found");
+        }
         userRepository.deleteById(id);
     }
 
     public UserResponseDTO update(Long id, UserDTO data){
         User user = userRepository.findById(id)
-                .orElseThrow( () -> new RuntimeException("User not found"));
+                .orElseThrow( () -> new ResourceNotFoundException("User not found"));
 
         if(userRepository.existsByNicknameAndIdNot(data.getNickname(), id)){
-            throw new RuntimeException("Nickname already exists");
+            throw new ConflictException("Nickname already exists");
         }
 
         user.setName(data.getName());
