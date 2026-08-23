@@ -3,6 +3,7 @@ package com.project.hiato.service;
 import com.project.hiato.dto.ArtistReleaseDTO;
 import com.project.hiato.entity.ArtistRelease;
 import com.project.hiato.entity.ArtistReleaseId;
+import com.project.hiato.exception.ConflictException;
 import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.repository.ArtistReleaseRepository;
 import com.project.hiato.repository.ArtistRepository;
@@ -34,6 +35,11 @@ public class ArtistReleaseService {
         if(!releaseRepository.existsById(data.getReleaseId())){
             throw new ResourceNotFoundException("Release not found");
         }
+
+        if(artistReleaseRepository.existsById(id)){
+            throw new ConflictException("Artist Release already exists");
+        }
+
 
         artistRelease.setId(id);
         artistRelease.setPrimary(data.isPrimary());
