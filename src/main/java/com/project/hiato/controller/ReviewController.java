@@ -3,6 +3,7 @@ package com.project.hiato.controller;
 import com.project.hiato.dto.ReviewDTO;
 import com.project.hiato.dto.ReviewResponseDTO;
 import com.project.hiato.service.ReviewService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ReviewResponseDTO create(@RequestBody ReviewDTO data){
+    public ReviewResponseDTO create(@Valid @RequestBody ReviewDTO data){
         return reviewService.create(data);
     }
 

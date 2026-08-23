@@ -4,6 +4,7 @@ import com.project.hiato.dto.ReviewDTO;
 import com.project.hiato.dto.ReviewResponseDTO;
 import com.project.hiato.entity.Review;
 import com.project.hiato.exception.BusinessRuleException;
+import com.project.hiato.exception.ConflictException;
 import com.project.hiato.exception.ResourceNotFoundException;
 import com.project.hiato.utils.TypeReview;
 import com.project.hiato.repository.ReleaseRepository;
@@ -54,6 +55,10 @@ public class ReviewService {
 
         if(data.getTypeReview().equals(TypeReview.TRACK) && !trackRepository.existsById(data.getTargetId())){
             throw new ResourceNotFoundException("Track not found");
+        }
+
+        if(reviewRepository.existsByUserIdAndTypeReviewAndTargetId(data.getUserId(), data.getTypeReview().name(), data.getTargetId())){
+            throw new ConflictException("Review already exists");
         }
 
         review.setUserId(data.getUserId());
