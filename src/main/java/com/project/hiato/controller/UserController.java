@@ -1,6 +1,7 @@
 package com.project.hiato.controller;
 
 import com.project.hiato.dto.UserDTO;
+import com.project.hiato.dto.UserPasswordDTO;
 import com.project.hiato.dto.UserResponseDTO;
 import com.project.hiato.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +43,8 @@ public class UserController {
         return userService.update(id, data);
     }
 
-
+    @PutMapping("/{id}/password")
+    public UserResponseDTO updatePassword(@PathVariable Long id, @RequestBody UserPasswordDTO data){
+        return userService.updatePassword(id, data);
+    }
 }
